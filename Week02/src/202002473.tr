@@ -1,0 +1,10 @@
+fn foo(a : u32, b : u32) -> u32 {
+    let c = a;
+    b = b * b;
+    c = -(a);
+    return a;
+}
+
+fn main() {
+    foo!(2, 3);
+}
