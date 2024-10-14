@@ -32,7 +32,7 @@ public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTree
         String ret_type_spec = r4tree.get(ctx.ret_type_spec());
         String compound_stmt = r4tree.get(ctx.compound_stmt());
 
-        func_sentence = FUNC + ' ' + id + '(' + params + ')' + ret_type_spec + ' ' + compound_stmt;
+        func_sentence = FUNC + ' ' + id + " (" + params + ") " + ret_type_spec + compound_stmt;
         r4tree.put(ctx, func_sentence);
     }
 
@@ -42,7 +42,7 @@ public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTree
         for (int i = 0; i < ctx.param().size(); i++) {
             params += r4tree.get(ctx.param(i));
             if (i < ctx.param().size() - 1)
-                params += ',';
+                params += ", ";
         }
 
         r4tree.put(ctx, params);
@@ -66,7 +66,7 @@ public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTree
         if (ctx.RARROW() != null) {
             String RARROW = ctx.RARROW().getText();
             String type_spec = r4tree.get(ctx.type_spec());
-            exitRet_type_spec += RARROW + ' ' + type_spec;
+            exitRet_type_spec += RARROW + ' ' + type_spec + ' ';
         }
 
         r4tree.put(ctx, exitRet_type_spec);
@@ -145,6 +145,13 @@ public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTree
             String loop_stmt = r4tree.get(ctx.loop_stmt());
             r4tree.put(ctx, loop_stmt);
         }
+    }
+
+    @Override public void exitReturn_stmt(tinyR4Parser.Return_stmtContext ctx) {
+        String ret = ctx.RETURN().getText();
+        String expr = r4tree.get(ctx.expr());
+
+        r4tree.put(ctx, ret + ' ' + expr + ";\n");
     }
 
     @Override public void exitExpr_stmt(tinyR4Parser.Expr_stmtContext ctx) {
