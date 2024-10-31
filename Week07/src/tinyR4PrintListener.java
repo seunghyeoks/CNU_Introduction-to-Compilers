@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
 public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTreeListener {
     private static String output;
+    private int depth = 0;  // {} 레벨
     ParseTreeProperty<String> r4Tree = new ParseTreeProperty<>();
 
     public static String getOutput() {
@@ -29,12 +30,12 @@ public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTree
         String params = r4Tree.get(ctx.params());
         String ret_type_spec = r4Tree.get(ctx.ret_type_spec());
         String compound_stmt = r4Tree.get(ctx.compound_stmt());
-        r4Tree.put(ctx, fun + " " + id + "(" + params + ") " + ret_type_spec + compound_stmt);
+        r4Tree.put(ctx, fun + " " + id + "(" + params + ") " + ret_type_spec + compound_stmt + "\n");
     }
 
     @Override public void exitParams(tinyR4Parser.ParamsContext ctx) {
         int count = ctx.getChildCount();
-        if(count == 0)
+        if (count == 0)
             r4Tree.put(ctx, "");
         else {
             StringBuilder params = new StringBuilder();
@@ -73,14 +74,26 @@ public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTree
         }
     }
 
+    // {} 마다 중첩 횟수를 계산 하기 위해 depth 를 사용
+    @Override public void enterCompound_stmt(tinyR4Parser.Compound_stmtContext ctx) {
+        depth++;
+    }
+
     @Override public void exitCompound_stmt(tinyR4Parser.Compound_stmtContext ctx) {
         StringBuilder result = new StringBuilder();
         int local_count = ctx.local_decl().size();
         int stmt_count = ctx.stmt().size();
-        for (int i = 0; i < local_count; i++)
+        for (int i = 0; i < local_count; i++) {
+            result.append("\t".repeat(Math.max(0, depth)));
             result.append(r4Tree.get(ctx.local_decl(i)));
-        for (int i = 0; i < stmt_count; i++)
+        }
+        for (int i = 0; i < stmt_count; i++) {
+            result.append("\t".repeat(Math.max(0, depth)));
             result.append(r4Tree.get(ctx.stmt(i)));
+        }
+
+        depth--;
+        result.append("\t".repeat(Math.max(0, depth)));
         r4Tree.put(ctx, "{\n" + result + "}\n");
     }
 
@@ -160,7 +173,7 @@ public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTree
     }
 
     @Override public void exitAdditive_expr(tinyR4Parser.Additive_exprContext ctx) {
-        String result = "";
+        String result;
         if(ctx.additive_expr() != null) {
             String left = r4Tree.get(ctx.additive_expr());
             String op = ctx.getChild(1).getText();
@@ -172,7 +185,7 @@ public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTree
     }
 
     @Override public void exitMultiplicative_expr(tinyR4Parser.Multiplicative_exprContext ctx) {
-        String result = "";
+        String result;
         if(ctx.multiplicative_expr() != null) {
             String left = r4Tree.get(ctx.multiplicative_expr());
             String op = ctx.getChild(1).getText();
@@ -184,7 +197,7 @@ public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTree
     }
 
     @Override public void exitUnary_expr(tinyR4Parser.Unary_exprContext ctx) {
-        String result = "";
+        String result;
         if(ctx.expr() != null) {
             String op = ctx.getChild(0).getText();
             String expr = r4Tree.get(ctx.expr());
@@ -213,7 +226,7 @@ public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTree
     }
 
     @Override public void exitRelative_expr(tinyR4Parser.Relative_exprContext ctx) {
-        String result = "";
+        String result;
         if(ctx.relative_expr() != null) {
             String left = r4Tree.get(ctx.relative_expr());
             String op = ctx.getChild(1).getText();
@@ -225,7 +238,7 @@ public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTree
     }
 
     @Override public void exitComparative_expr(tinyR4Parser.Comparative_exprContext ctx) {
-        String result = "";
+        String result;
         if(ctx.comparative_expr() != null) {
             String left = r4Tree.get(ctx.comparative_expr());
             String op = ctx.getChild(1).getText();
@@ -238,11 +251,13 @@ public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTree
 
     @Override public void exitIf_stmt(tinyR4Parser.If_stmtContext ctx) {
         String result = "";
-        result += ctx.IF().getText();
-        result += r4Tree.get(ctx.relative_expr());
+        result += ctx.IF().getText() + " ";
+        result += r4Tree.get(ctx.relative_expr()) + " ";
         result += r4Tree.get(ctx.compound_stmt(0));
         if (ctx.ELSE() != null) {
-            result += ctx.ELSE();
+            if (result.endsWith("\n"))
+                result = result.substring(0, result.length() - 1);
+            result += " " + ctx.ELSE() + " ";
             result += r4Tree.get(ctx.compound_stmt(1));
         }
         r4Tree.put(ctx, result);
@@ -268,17 +283,19 @@ public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTree
     @Override public void exitRange(tinyR4Parser.RangeContext ctx) {
         String result = "";
         result += ctx.literal(0).getText() + "..";
-        if (ctx.getChild(1).getText().equals("="))
+        if (ctx.getChild(2).getText().equals("="))
             result += "=";
         result += ctx.literal(1).getText();
         r4Tree.put(ctx, result);
     }
 
     @Override public void exitReturn_stmt(tinyR4Parser.Return_stmtContext ctx) {
-        String ret = ctx.RETURN().getText();
-        String expr = r4Tree.get(ctx.expr());
+        String result = "";
+        result += ctx.RETURN().getText();
+        if (ctx.expr() != null)
+            result += " " + r4Tree.get(ctx.expr());
 
-        r4Tree.put(ctx, ret + ' ' + expr + ";\n");
+        r4Tree.put(ctx, result + ";\n");
     }
 
     @Override public void exitBreak_stmt(tinyR4Parser.Break_stmtContext ctx) {
