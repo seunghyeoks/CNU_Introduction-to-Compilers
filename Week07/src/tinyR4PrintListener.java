@@ -79,6 +79,7 @@ public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTree
         depth++;
     }
 
+    // 나갈때는 depth 줄이기
     @Override public void exitCompound_stmt(tinyR4Parser.Compound_stmtContext ctx) {
         StringBuilder result = new StringBuilder();
         int local_count = ctx.local_decl().size();
@@ -255,7 +256,7 @@ public class tinyR4PrintListener extends tinyR4BaseListener implements ParseTree
         result += r4Tree.get(ctx.relative_expr()) + " ";
         result += r4Tree.get(ctx.compound_stmt(0));
         if (ctx.ELSE() != null) {
-            if (result.endsWith("\n"))
+            if (result.endsWith("\n"))  // else 앞에 줄바꿈을 없애기
                 result = result.substring(0, result.length() - 1);
             result += " " + ctx.ELSE() + " ";
             result += r4Tree.get(ctx.compound_stmt(1));
