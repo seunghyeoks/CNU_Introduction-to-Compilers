@@ -27,3 +27,5 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/src/Test.j
+/src/Test_answer.j

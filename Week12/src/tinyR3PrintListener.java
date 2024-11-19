@@ -12,6 +12,10 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
         return output;
     }
 
+    @Override public void enterProgram(tinyR3Parser.ProgramContext ctx) {
+
+    }
+
     @Override public void exitProgram(tinyR3Parser.ProgramContext ctx) {
         StringBuilder program = new StringBuilder();
         for (int i = 0; i < ctx.decl().size(); i++)
@@ -19,7 +23,23 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
         output = program.toString();
     }
 
+    @Override public void enterDecl(tinyR3Parser.DeclContext ctx) {
+
+    }
+
     @Override public void exitDecl(tinyR3Parser.DeclContext ctx) {
+
+    }
+
+    @Override public void enterMain_decl(tinyR3Parser.Main_declContext ctx) {
+
+    }
+
+    @Override public void exitMain_decl(tinyR3Parser.Main_declContext ctx) {
+
+    }
+
+    @Override public void enterType_spec(tinyR3Parser.Type_specContext ctx) {
 
     }
 
@@ -52,6 +72,10 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
         r3Tree.put(ctx, "{\n" + result + "}\n");
     }
 
+    @Override public void enterLocal_decl(tinyR3Parser.Local_declContext ctx) {
+
+    }
+
     @Override public void exitLocal_decl(tinyR3Parser.Local_declContext ctx) {
         String local_decl = "";
 
@@ -69,6 +93,10 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
         r3Tree.put(ctx, local_decl);
     }
 
+    @Override public void enterDec_spec(tinyR3Parser.Dec_specContext ctx) {
+
+    }
+
     @Override public void exitDec_spec(tinyR3Parser.Dec_specContext ctx) {
         String let = ctx.LET().getText();
         if (ctx.MUT() != null) {
@@ -79,6 +107,8 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
         }
     }
 
+    @Override public void enterVal(tinyR3Parser.ValContext ctx) { }
+
     @Override public void exitVal(tinyR3Parser.ValContext ctx) {
         String result = "";
         if(ctx.literal() != null)
@@ -87,6 +117,8 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
             result = r3Tree.get(ctx.id());
         r3Tree.put(ctx, result);
     }
+
+    @Override public void enterStmt(tinyR3Parser.StmtContext ctx) { }
 
     @Override public void exitStmt(tinyR3Parser.StmtContext ctx) {
         String result = "";
@@ -98,10 +130,14 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
         r3Tree.put(ctx, result);
     }
 
+    @Override public void enterExpr_stmt(tinyR3Parser.Expr_stmtContext ctx) { }
+
     @Override public void exitExpr_stmt(tinyR3Parser.Expr_stmtContext ctx) {
         String expr = r3Tree.get(ctx.expr());
         r3Tree.put(ctx, expr + ";\n");
     }
+
+    @Override public void enterExpr(tinyR3Parser.ExprContext ctx) { }
 
     @Override public void exitExpr(tinyR3Parser.ExprContext ctx) {
         String result = "";
@@ -115,6 +151,8 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
         r3Tree.put(ctx, result);
     }
 
+    @Override public void enterAdditive_expr(tinyR3Parser.Additive_exprContext ctx) { }
+
     @Override public void exitAdditive_expr(tinyR3Parser.Additive_exprContext ctx) {
         String result;
         if(ctx.additive_expr() != null) {
@@ -126,6 +164,8 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
             result = r3Tree.get(ctx.multiplicative_expr());
         r3Tree.put(ctx, result);
     }
+
+    @Override public void enterMultiplicative_expr(tinyR3Parser.Multiplicative_exprContext ctx) { }
 
     @Override public void exitMultiplicative_expr(tinyR3Parser.Multiplicative_exprContext ctx) {
         String result;
@@ -139,6 +179,8 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
         r3Tree.put(ctx, result);
     }
 
+    @Override public void enterUnary_expr(tinyR3Parser.Unary_exprContext ctx) { }
+
     @Override public void exitUnary_expr(tinyR3Parser.Unary_exprContext ctx) {
         String result;
         if(ctx.expr() != null) {
@@ -149,6 +191,8 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
             result = r3Tree.get(ctx.factor());
         r3Tree.put(ctx, result);
     }
+
+    @Override public void enterFactor(tinyR3Parser.FactorContext ctx) { }
 
     @Override public void exitFactor(tinyR3Parser.FactorContext ctx) {
         String result = "";
@@ -168,6 +212,12 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
         r3Tree.put(ctx, result);
     }
 
+    @Override public void enterPrint_stmt(tinyR3Parser.Print_stmtContext ctx) { }
+
+    @Override public void exitPrint_stmt(tinyR3Parser.Print_stmtContext ctx) { }
+
+    @Override public void enterReturn_stmt(tinyR3Parser.Return_stmtContext ctx) { }
+
     @Override public void exitReturn_stmt(tinyR3Parser.Return_stmtContext ctx) {
         String result = "";
         result += ctx.RETURN().getText();
@@ -176,6 +226,8 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
 
         r3Tree.put(ctx, result + ";\n");
     }
+
+    @Override public void enterArgs(tinyR3Parser.ArgsContext ctx) { }
 
     @Override public void exitArgs(tinyR3Parser.ArgsContext ctx) {
         int count = ctx.getChildCount();
@@ -194,9 +246,13 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
         }
     }
 
+    @Override public void enterLiteral(tinyR3Parser.LiteralContext ctx) { }
+
     @Override public void exitLiteral(tinyR3Parser.LiteralContext ctx) {
         r3Tree.put(ctx, ctx.LITERAL().getText());
     }
+
+    @Override public void enterId(tinyR3Parser.IdContext ctx) { }
 
     @Override public void exitId(tinyR3Parser.IdContext ctx) {
         r3Tree.put(ctx, ctx.ID().getText());
