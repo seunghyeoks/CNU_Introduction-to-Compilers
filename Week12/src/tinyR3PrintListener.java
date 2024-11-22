@@ -12,9 +12,7 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
         return output;
     }
 
-    @Override public void enterProgram(tinyR3Parser.ProgramContext ctx) {
-
-    }
+    // @Override public void enterProgram(tinyR3Parser.ProgramContext ctx) {}
 
     @Override public void exitProgram(tinyR3Parser.ProgramContext ctx) {
         StringBuilder program = new StringBuilder();
@@ -24,19 +22,39 @@ public class tinyR3PrintListener extends tinyR3BaseListener implements ParseTree
     }
 
     @Override public void enterDecl(tinyR3Parser.DeclContext ctx) {
-
+        String prologue = """
+                .class public Test
+                .super java/lang/Object
+                ; strandard initializer
+                .method public <init>()V
+                aload_0
+                invokenonvirtual java/lang/Object/<init>()V
+                return
+                .end method
+                """;
+        r3Tree.put(ctx, prologue);
     }
 
     @Override public void exitDecl(tinyR3Parser.DeclContext ctx) {
-
+        String prologue = r3Tree.get(ctx);
+        String fun_decl = r3Tree.get(ctx.main_decl());
+        r3Tree.put(ctx, prologue + fun_decl);
     }
 
     @Override public void enterMain_decl(tinyR3Parser.Main_declContext ctx) {
-
+        String prologue = """
+                .method public static main([Ljava/lang/String;)V
+                .limit stack 32
+                .limit locals 32
+                """;
+        r3Tree.put(ctx, prologue);
     }
 
     @Override public void exitMain_decl(tinyR3Parser.Main_declContext ctx) {
-
+        String prologue = r3Tree.get(ctx);
+        String compound_stmt = r3Tree.get(ctx.compound_stmt());
+        String epilogue = ".end method";
+        r3Tree.put(ctx, prologue + compound_stmt + epilogue);
     }
 
     @Override public void enterType_spec(tinyR3Parser.Type_specContext ctx) {

@@ -23,9 +23,10 @@ public class Main {
             ParseTreeWalker walker = new ParseTreeWalker();
             walker.walk(new tinyR3PrintListener(), tree);
 
-            OutputStream output = new FileOutputStream("./src/Test.j");
-            output.write(code.toString().getBytes());
-            System.out.println(tinyR3PrintListener.getOutput());
+            try (OutputStream output = new FileOutputStream("./src/Test.j")) {
+                output.write(tinyR3PrintListener.getOutput().getBytes());
+                System.out.println(tinyR3PrintListener.getOutput());
+            }
 
         } catch (RuntimeException e) {
             System.out.println("Error");
