@@ -1,0 +1,43 @@
+fn main() {
+    let a = 10;
+    let b = 5;
+    let c = 20;
+    let d = 0;
+
+    if a == 10 && b == 5 {
+        println!("{}", a);
+    } else {
+        println!("{}", b);
+    }
+
+    if c != 20 || d == 0 {
+        println!("{}", c);
+    } else {
+        println!("{}", d);
+    }
+
+    if a < b {
+        println!("{}", c);
+    } else {
+        println!("{}", a);
+    }
+
+    if a >= b {
+        println!("{}", a);
+    } else {
+        println!("{}", b);
+    }
+
+    if c > a {
+        println!("{}", c);
+    } else {
+        println!("{}", d);
+    }
+
+    if a == b || a != 10 {
+        println!("{}", b);
+    } else {
+        println!("{}", a);
+    }
+    return;
+}
