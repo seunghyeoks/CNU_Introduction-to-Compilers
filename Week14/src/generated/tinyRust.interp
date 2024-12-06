@@ -23,7 +23,7 @@ null
 '"{}"'
 '..'
 'fn'
-'u32'
+'i32'
 'loop'
 'for'
 'if'
@@ -75,7 +75,7 @@ null
 null
 null
 FUNC
-U32
+I32
 LOOP
 FOR
 IF

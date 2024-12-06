@@ -19,7 +19,7 @@ public class tinyRustLexer extends Lexer {
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
-		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, FUNC=23, U32=24, LOOP=25, 
+		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, FUNC=23, I32=24, LOOP=25, 
 		FOR=26, IF=27, ELSE=28, RETURN=29, LET=30, MUT=31, BREAK=32, OR=33, AND=34, 
 		LE=35, GE=36, EQ=37, NE=38, RARROW=39, ID=40, LITERAL=41, LIT_INT=42, 
 		LIT_STR=43, DecimalConstant=44, OctalConstant=45, HexadecimalConstant=46, 
@@ -36,7 +36,7 @@ public class tinyRustLexer extends Lexer {
 		return new String[] {
 			"T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7", "T__8", 
 			"T__9", "T__10", "T__11", "T__12", "T__13", "T__14", "T__15", "T__16", 
-			"T__17", "T__18", "T__19", "T__20", "T__21", "FUNC", "U32", "LOOP", "FOR", 
+			"T__17", "T__18", "T__19", "T__20", "T__21", "FUNC", "I32", "LOOP", "FOR", 
 			"IF", "ELSE", "RETURN", "LET", "MUT", "BREAK", "OR", "AND", "LE", "GE", 
 			"EQ", "NE", "RARROW", "ID", "LITERAL", "LIT_INT", "LIT_STR", "DecimalConstant", 
 			"OctalConstant", "HexadecimalConstant", "NilConstant", "WildCardConstant", 
@@ -49,7 +49,7 @@ public class tinyRustLexer extends Lexer {
 		return new String[] {
 			null, "'('", "')'", "'main'", "'()'", "','", "':'", "'{'", "'}'", "'='", 
 			"';'", "'+'", "'-'", "'*'", "'/'", "'%'", "'!'", "'<'", "'>'", "'in'", 
-			"'println!'", "'\"{}\"'", "'..'", "'fn'", "'u32'", "'loop'", "'for'", 
+			"'println!'", "'\"{}\"'", "'..'", "'fn'", "'i32'", "'loop'", "'for'", 
 			"'if'", "'else'", "'return'", "'let'", "'mut'", "'break'", "'||'", "'&&'", 
 			"'<='", "'>='", "'=='", "'!='", "'->'", null, null, null, null, null, 
 			null, null, null, "'_'"
@@ -60,7 +60,7 @@ public class tinyRustLexer extends Lexer {
 		return new String[] {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
 			null, null, null, null, null, null, null, null, null, null, null, "FUNC", 
-			"U32", "LOOP", "FOR", "IF", "ELSE", "RETURN", "LET", "MUT", "BREAK", 
+			"I32", "LOOP", "FOR", "IF", "ELSE", "RETURN", "LET", "MUT", "BREAK", 
 			"OR", "AND", "LE", "GE", "EQ", "NE", "RARROW", "ID", "LITERAL", "LIT_INT", 
 			"LIT_STR", "DecimalConstant", "OctalConstant", "HexadecimalConstant", 
 			"NilConstant", "WildCardConstant", "WS"
@@ -240,7 +240,7 @@ public class tinyRustLexer extends Lexer {
 		"\u0000\u009b*\u0001\u0000\u0000\u0000\u009c\u009d\u0005.\u0000\u0000\u009d"+
 		"\u009e\u0005.\u0000\u0000\u009e,\u0001\u0000\u0000\u0000\u009f\u00a0\u0005"+
 		"f\u0000\u0000\u00a0\u00a1\u0005n\u0000\u0000\u00a1.\u0001\u0000\u0000"+
-		"\u0000\u00a2\u00a3\u0005u\u0000\u0000\u00a3\u00a4\u00053\u0000\u0000\u00a4"+
+		"\u0000\u00a2\u00a3\u0005i\u0000\u0000\u00a3\u00a4\u00053\u0000\u0000\u00a4"+
 		"\u00a5\u00052\u0000\u0000\u00a50\u0001\u0000\u0000\u0000\u00a6\u00a7\u0005"+
 		"l\u0000\u0000\u00a7\u00a8\u0005o\u0000\u0000\u00a8\u00a9\u0005o\u0000"+
 		"\u0000\u00a9\u00aa\u0005p\u0000\u0000\u00aa2\u0001\u0000\u0000\u0000\u00ab"+

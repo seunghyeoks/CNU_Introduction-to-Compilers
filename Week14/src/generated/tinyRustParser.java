@@ -19,7 +19,7 @@ public class tinyRustParser extends Parser {
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
-		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, FUNC=23, U32=24, LOOP=25, 
+		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, FUNC=23, I32=24, LOOP=25, 
 		FOR=26, IF=27, ELSE=28, RETURN=29, LET=30, MUT=31, BREAK=32, OR=33, AND=34, 
 		LE=35, GE=36, EQ=37, NE=38, RARROW=39, ID=40, LITERAL=41, LIT_INT=42, 
 		LIT_STR=43, DecimalConstant=44, OctalConstant=45, HexadecimalConstant=46, 
@@ -50,7 +50,7 @@ public class tinyRustParser extends Parser {
 		return new String[] {
 			null, "'('", "')'", "'main'", "'()'", "','", "':'", "'{'", "'}'", "'='", 
 			"';'", "'+'", "'-'", "'*'", "'/'", "'%'", "'!'", "'<'", "'>'", "'in'", 
-			"'println!'", "'\"{}\"'", "'..'", "'fn'", "'u32'", "'loop'", "'for'", 
+			"'println!'", "'\"{}\"'", "'..'", "'fn'", "'i32'", "'loop'", "'for'", 
 			"'if'", "'else'", "'return'", "'let'", "'mut'", "'break'", "'||'", "'&&'", 
 			"'<='", "'>='", "'=='", "'!='", "'->'", null, null, null, null, null, 
 			null, null, null, "'_'"
@@ -61,7 +61,7 @@ public class tinyRustParser extends Parser {
 		return new String[] {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
 			null, null, null, null, null, null, null, null, null, null, null, "FUNC", 
-			"U32", "LOOP", "FOR", "IF", "ELSE", "RETURN", "LET", "MUT", "BREAK", 
+			"I32", "LOOP", "FOR", "IF", "ELSE", "RETURN", "LET", "MUT", "BREAK", 
 			"OR", "AND", "LE", "GE", "EQ", "NE", "RARROW", "ID", "LITERAL", "LIT_INT", 
 			"LIT_STR", "DecimalConstant", "OctalConstant", "HexadecimalConstant", 
 			"NilConstant", "WildCardConstant", "WS"
@@ -491,7 +491,7 @@ public class tinyRustParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class Type_specContext extends ParserRuleContext {
-		public TerminalNode U32() { return getToken(tinyRustParser.U32, 0); }
+		public TerminalNode I32() { return getToken(tinyRustParser.I32, 0); }
 		public Type_specContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -518,7 +518,7 @@ public class tinyRustParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(101);
-			match(U32);
+			match(I32);
 			}
 		}
 		catch (RecognitionException re) {
