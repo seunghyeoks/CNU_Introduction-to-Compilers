@@ -5,16 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="74dac4e7-6314-411e-95b0-0c579d83da1b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Test.tr" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Week14.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Week14.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/generated/tinyRust.interp" beforeDir="false" afterPath="$PROJECT_DIR$/src/generated/tinyRust.interp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/generated/tinyRust.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/src/generated/tinyRust.tokens" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/generated/tinyRustLexer.interp" beforeDir="false" afterPath="$PROJECT_DIR$/src/generated/tinyRustLexer.interp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/generated/tinyRustLexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/generated/tinyRustLexer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/generated/tinyRustLexer.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/src/generated/tinyRustLexer.tokens" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/generated/tinyRustParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/generated/tinyRustParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Test.j" beforeDir="false" afterPath="$PROJECT_DIR$/src/Test.j" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Test.tr" beforeDir="false" afterPath="$PROJECT_DIR$/src/Test.tr" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tinyRustListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tinyRustListener.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

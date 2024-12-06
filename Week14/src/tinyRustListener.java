@@ -13,6 +13,7 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
 
     private static FileWriter fw;
     static HashMap<String, Integer> localVarMap;
+    static HashMap<String, String> globalFuncMap;
     static int localVar_curIdx = 0;
     static int labelNum = 0;
     static String tempLabel_True, tempLabel_Else, tempLabel_End, tempLabel_Temp;  // If
@@ -31,6 +32,8 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
     @Override public void enterProgram(tinyRustParser.ProgramContext ctx) {
         // 파일 출력
         File outputFile = new File("./src/Test.j");
+
+        globalFuncMap = new HashMap<>();
 
         try {
             if (!outputFile.exists()) {
@@ -89,33 +92,28 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
     }
 
     @Override public void exitFun_decl(tinyRustParser.Fun_declContext ctx) {
+        String func = ctx.id().getText() + rustTree.get(ctx.params()) + rustTree.get(ctx.ret_type_spec());
+        globalFuncMap.put(ctx.id().getText(), func);
+
         String result = "";
-        result += ".method public static " + ctx.id().getText();
-        result += rustTree.get(ctx.params());
-        result += rustTree.get(ctx.ret_type_spec()) + "\n";
+        result += ".method public static " + func + "\n";
         result += ".limit stack 32\n.limit locals 32\n";
         result += rustTree.get(ctx.compound_stmt());
-        result += "\n.end method\n\n";
+        result += ".end method\n\n";
+
         rustTree.put(ctx, result);
     }
 
-    @Override public void enterMain_decl(tinyRustParser.Main_declContext ctx) {
-        // Main_decl은 main 함수이므로 main을 위한 자료구조 및 변수 초기화
-        try {
-            fw.write("""
-                                
-                .method public static main([Ljava/lang/String;)V
-                .limit stack 32
-                .limit locals 32
-                """);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override public void exitMain_decl(tinyRustParser.Main_declContext ctx) {
-        String compound_stmt = rustTree.get(ctx.compound_stmt());
-        rustTree.put(ctx, compound_stmt + "\n" + ".end method\n\n");
+        String result = "";
+        result += """
+        .method public static main([Ljava/lang/String;)V
+        .limit stack 32
+        .limit locals 32
+        """;
+        result += rustTree.get(ctx.compound_stmt());
+        result += ".end method\n\n";
+        rustTree.put(ctx, result);
     }
 
     @Override public void exitParams(tinyRustParser.ParamsContext ctx) {
@@ -252,10 +250,16 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
 
     @Override public void exitFactor(tinyRustParser.FactorContext ctx) {//expr 막바지에 호출, literal, id 터미널 호출하거나 괄호 연산
         String result = "";
-        if (ctx.id() != null) {
+        if (ctx.args() != null) {
+            String id = ctx.id().getText();
+            result += rustTree.get(ctx.args());
+            result += "invokestatic Test/" + globalFuncMap.get(id);
+        } else if (ctx.id() != null) {
             result = "iload_" + getLocalVarTableIdx(rustTree.get(ctx.id()));
         } else if (ctx.literal() != null) {
             result = "bipush " + rustTree.get(ctx.literal());
+        } else if (ctx.expr() != null) {
+            result += rustTree.get(ctx.expr());
         }
         rustTree.put(ctx, result + "\n");
     }
@@ -365,8 +369,6 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
         result += "goto " + tempLabel_Loop + "\n";
         result += tempLabel_Break + ":\n";
 
-        //tempI = "";
-        // also map에서 삭제
         rustTree.put(ctx, result);
     }
 
@@ -418,10 +420,10 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
         if (ctx.expr() != null) {
             String result = "";
             result += rustTree.get(ctx.expr());
-            result += "ireturn";
+            result += "ireturn\n";
             rustTree.put(ctx, result);
         } else {
-            rustTree.put(ctx, "return");
+            rustTree.put(ctx, "return\n");
         }
     }
 
@@ -432,10 +434,11 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
     }
 
     @Override public void exitArgs(tinyRustParser.ArgsContext ctx) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (tinyRustParser.ExprContext expr : ctx.expr()) {
-
+            result.append(rustTree.get(expr));
         }
+        rustTree.put(ctx, result.toString());
     }
 
     @Override public void exitLiteral(tinyRustParser.LiteralContext ctx) {
