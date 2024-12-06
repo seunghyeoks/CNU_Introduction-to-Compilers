@@ -15,7 +15,8 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
     static HashMap<String, Integer> localVarMap;
     static int localVar_curIdx = 0;
     static int labelNum = 0;
-    static String tempLabel_True, tempLabel_Else, tempLabel_End, tempLabel_Temp;
+    static String tempLabel_True, tempLabel_Else, tempLabel_End, tempLabel_Temp;  // If
+    static String tempLabel_Break, tempLabel_Loop, tempI;  // For, Loop
 
     private static void assignLocalVar(String VarName){
         if(!(localVarMap.containsKey(VarName))) localVarMap.put(VarName, localVar_curIdx);
@@ -26,11 +27,10 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
         return localVarMap.get(VarName);
     }
 
+
     @Override public void enterProgram(tinyRustParser.ProgramContext ctx) {
         // 파일 출력
         File outputFile = new File("./src/Test.j");
-        //변수 테이블
-        localVarMap = new HashMap<>();
 
         try {
             if (!outputFile.exists()) {
@@ -72,9 +72,31 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
         }
     }
 
+    @Override public void enterDecl(tinyRustParser.DeclContext ctx) {
+        localVarMap = new HashMap<>();
+        localVar_curIdx = 0;
+        labelNum = 0;
+    }
+
     @Override public void exitDecl(tinyRustParser.DeclContext ctx) {
-        String main_decl = rustTree.get(ctx.main_decl());
-        rustTree.put(ctx, main_decl);
+        if (ctx.main_decl() != null) {
+            String main_decl = rustTree.get(ctx.main_decl());
+            rustTree.put(ctx, main_decl);
+        } else {
+            String fun_decl = rustTree.get(ctx.fun_decl());
+            rustTree.put(ctx, fun_decl);
+        }
+    }
+
+    @Override public void exitFun_decl(tinyRustParser.Fun_declContext ctx) {
+        String result = "";
+        result += ".method public static " + ctx.id().getText();
+        result += rustTree.get(ctx.params());
+        result += rustTree.get(ctx.ret_type_spec()) + "\n";
+        result += ".limit stack 32\n.limit locals 32\n";
+        result += rustTree.get(ctx.compound_stmt());
+        result += "\n.end method\n\n";
+        rustTree.put(ctx, result);
     }
 
     @Override public void enterMain_decl(tinyRustParser.Main_declContext ctx) {
@@ -94,6 +116,34 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
     @Override public void exitMain_decl(tinyRustParser.Main_declContext ctx) {
         String compound_stmt = rustTree.get(ctx.compound_stmt());
         rustTree.put(ctx, compound_stmt + "\n" + ".end method\n\n");
+    }
+
+    @Override public void exitParams(tinyRustParser.ParamsContext ctx) {
+        StringBuilder result = new StringBuilder("(");
+        for (tinyRustParser.ParamContext param : ctx.param()) {
+            result.append(rustTree.get(param));
+        }
+        result.append(")");
+        rustTree.put(ctx, result.toString());
+    }
+
+    @Override public void exitParam(tinyRustParser.ParamContext ctx) {
+        assignLocalVar(ctx.id().getText());
+        if (ctx.type_spec() != null) {
+            rustTree.put(ctx, "I");
+        }
+    }
+
+    @Override public void exitType_spec(tinyRustParser.Type_specContext ctx) {
+        rustTree.put(ctx, "");
+    }
+
+    @Override public void exitRet_type_spec(tinyRustParser.Ret_type_specContext ctx) {
+        if (ctx.type_spec() != null) {
+            rustTree.put(ctx, "I");
+        } else {
+            rustTree.put(ctx, "V");
+        }
     }
 
     @Override public void exitCompound_stmt(tinyRustParser.Compound_stmtContext ctx) {
@@ -270,10 +320,10 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
     }
 
     @Override public void enterIf_stmt(tinyRustParser.If_stmtContext ctx) {
-        tempLabel_True = "LABEL_" + labelNum++; // if true
-        tempLabel_Else = "LABEL_" + labelNum++; // else
-        tempLabel_End  = "LABEL_" + labelNum++; // end
-        tempLabel_Temp = "LABEL_" + labelNum++; // for OR operation
+        tempLabel_True = "LABEL_True_" + labelNum++; // if true
+        tempLabel_Else = "LABEL_Else_" + labelNum++; // else
+        tempLabel_End  = "LABEL_End_" + labelNum++;  // end
+        tempLabel_Temp = "LABEL_temp_" + labelNum++; // for OR operation
     }
 
     @Override public void exitIf_stmt(tinyRustParser.If_stmtContext ctx) {
@@ -289,16 +339,103 @@ public class tinyRustListener extends tinyRustBaseListener implements ParseTreeL
         rustTree.put(ctx, result);
     }
 
-    @Override
-    public void exitPrint_stmt(tinyRustParser.Print_stmtContext ctx) {
+    @Override public void enterFor_stmt(tinyRustParser.For_stmtContext ctx) {
+        tempI = ctx.id().getText();
+        assignLocalVar(tempI);  // i 저장
+        tempLabel_Loop = "LABEL_Loop_" + labelNum++;
+        tempLabel_Break = "LABEL_Break_" + labelNum++;
+    }
+
+    @Override public void exitFor_stmt(tinyRustParser.For_stmtContext ctx) {
+        String result = "";
+
+        // id는 enter랑 range 에서
+
+        // range
+        result += rustTree.get(ctx.range());
+
+        // loop stmt
+        result += rustTree.get(ctx.compound_stmt());  // break는 stmt에서 처리
+
+        // i++ 및 탈출 설정
+        result += "iload_" + getLocalVarTableIdx(tempI) + "\n";
+        result += "bipush 1\n";
+        result += "iadd\n";
+        result += "istore_" + getLocalVarTableIdx(tempI) + "\n";
+        result += "goto " + tempLabel_Loop + "\n";
+        result += tempLabel_Break + ":\n";
+
+        //tempI = "";
+        // also map에서 삭제
+        rustTree.put(ctx, result);
+    }
+
+    @Override public void enterLoop_stmt(tinyRustParser.Loop_stmtContext ctx) {
+        tempLabel_Loop = "LABEL_Loop_" + labelNum++;
+        tempLabel_Break = "LABEL_Break_" + labelNum++;
+    }
+
+    @Override public void exitLoop_stmt(tinyRustParser.Loop_stmtContext ctx) {
+        String result = "";
+
+        result += tempLabel_Loop + ":\n";
+        result += rustTree.get(ctx.compound_stmt());
+        result += "goto " + tempLabel_Loop + "\n";
+        result += tempLabel_Break + ":\n";
+
+        rustTree.put(ctx, result);
+    }
+
+    @Override public void exitPrint_stmt(tinyRustParser.Print_stmtContext ctx) {
         String result = "getstatic java/lang/System/out Ljava/io/PrintStream;\n";
         result += "iload_" + getLocalVarTableIdx(rustTree.get(ctx.id())) + "\n";
         result += "invokevirtual java/io/PrintStream.println(I)V\n";
         rustTree.put(ctx, result);
     }
 
+    @Override public void exitRange(tinyRustParser.RangeContext ctx) {
+        String result = "";
+
+        String literal1 = rustTree.get(ctx.literal(0));
+        result += "bipush " + literal1 + "\n";
+        result += "istore_" + getLocalVarTableIdx(tempI) + "\n";
+        result += tempLabel_Loop + ":\n";
+        result += "iload_" + getLocalVarTableIdx(tempI) + "\n";
+
+        String literal2 = rustTree.get(ctx.literal(1));
+        result += "bipush " + literal2 + "\n";
+
+        if (!ctx.getChild(2).getText().equals("=")) {
+            result += "if_icmpge " + tempLabel_Break + "\n";  // ..
+        } else {
+            result += "if_icmpgt " + tempLabel_Break + "\n";  // ..=
+        }
+
+        rustTree.put(ctx, result);
+    }
+
     @Override public void exitReturn_stmt(tinyRustParser.Return_stmtContext ctx) {
-        rustTree.put(ctx, "return");
+        if (ctx.expr() != null) {
+            String result = "";
+            result += rustTree.get(ctx.expr());
+            result += "ireturn";
+            rustTree.put(ctx, result);
+        } else {
+            rustTree.put(ctx, "return");
+        }
+    }
+
+    @Override public void exitBreak_stmt(tinyRustParser.Break_stmtContext ctx) {
+        String result = "";
+        result += "goto " + tempLabel_Break + "\n";
+        rustTree.put(ctx, result);
+    }
+
+    @Override public void exitArgs(tinyRustParser.ArgsContext ctx) {
+        String result = "";
+        for (tinyRustParser.ExprContext expr : ctx.expr()) {
+
+        }
     }
 
     @Override public void exitLiteral(tinyRustParser.LiteralContext ctx) {
