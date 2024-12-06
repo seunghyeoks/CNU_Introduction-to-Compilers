@@ -1,6 +1,3 @@
-fn main() {
-}
-
 fn add(a:i32, b:i32) -> i32 {
     return a + b;
 }
@@ -15,4 +12,21 @@ fn mal(b:i32) {
 
 fn azeros( ) -> i32 {
     return 4;
+}
+
+fn main() {
+    let a = 1;
+    let b = 2;
+    let ret = 0;
+    
+    ret = add(a, b);
+    println!("{}", ret);
+    
+    ret = div(a);
+    println!("{}", ret);
+    
+    ret = azeros( );
+    println!("{}", ret);
+    
+    return;
 }
